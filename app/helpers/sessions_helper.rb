@@ -2,10 +2,10 @@ module SessionsHelper
 
   def sign_in(user)
     cookies.permanent[:remember_token] = user.remember_token
-    self.current_user = user
+    self.current_user = user #this allows you to use current_user in both the views and controllers...AND actually calls def current user = (user)
   end
   
-  def signed_in?
+  def signed_in?  # used in the header file....IF ...blah...
     !current_user.nil?
   end 
   
@@ -18,7 +18,28 @@ module SessionsHelper
     @current_user ||= User.find_by_remember_token(cookies[:remember_token])
   end
   
-  def sign_out
+  def current_user?(user)
+    user == current_user
+  end
+  
+  def redirect_back_or(default) #this is to store the location that a user wants to go...if he is not logged in (for example, want to go to edit..., needs to remember so you can take me there)
+    redirect_to(session[:return_to] || default)
+    session.delete(:return_to)
+  end
+
+  def store_location #stores requested in a :return_to variable
+    session[:return_to] = request.url
+  end
+  
+   def signed_in_user
+    unless signed_in?
+      store_location
+      redirect_to signin_url, notice: "Please sign in."
+    end
+  end 
+  
+  
+  def sign_out #again, used in the header...
     self.current_user = nil
     cookies.delete(:remember_token)
   end

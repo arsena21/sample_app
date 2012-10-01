@@ -1,0 +1,10 @@
+<% provide(:title, 'All users') %>
+<h1>All users</h1>
+
+<%= will_paginate %> Need to pass an object here!...
+
+<ul class="users">
+     <%= render @users %> #rails knows we are going through a list and goes through one at a time
+</ul>
+
+<%= will_paginate %>
